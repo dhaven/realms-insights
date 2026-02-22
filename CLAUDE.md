@@ -16,6 +16,59 @@ Read these files to understand the project:
 2. **architecture.md** - Technical stack, parser design, validation strategy
 3. **plan.md** - Detailed implementation roadmap with atomic tasks
 4. **star-realms-knowledge.md** - Game rules and mechanics reference
+5. **CONTRIBUTING.md** - Workflow for AI contributors implementing tasks
+
+## How to Implement Tasks
+
+When asked to "implement the next task" or similar requests, follow this workflow:
+
+### 1. Read CONTRIBUTING.md
+The complete contribution workflow is documented in `CONTRIBUTING.md`. Always follow that process.
+
+### 2. Select Task from plan.md
+- Open `plan.md` and find the **first incomplete task** from the top
+- Tasks are prioritized - always work top-down
+- Skip tasks already assigned to a branch
+
+### 3. Follow the Branch Workflow
+**CRITICAL**: Never implement directly on `main`. Always use feature branches:
+
+```bash
+# Create feature branch
+git checkout -b feature/descriptive-name
+
+# Implement the task
+# ... write code, tests, etc ...
+
+# Commit changes
+git add <files>
+git commit -m "Clear description of changes
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+
+# Push branch
+git push -u origin feature/descriptive-name
+
+# Update plan.md to track the branch
+# Add "Status: In Progress" and "Branch: feature/descriptive-name" to the task
+git add plan.md
+git commit -m "Update plan.md: Track implementation branch"
+git push
+```
+
+### 4. Task Tracking Rules
+- **Before merge**: Task stays in `plan.md` marked as "In Progress" with branch name
+- **After merge**: Task can be marked "Completed" or removed from `plan.md`
+- Never remove tasks before their branches are merged to `main`
+- This maintains a complete audit trail
+
+### 5. What NOT to Do
+- ❌ Don't implement on `main` branch directly
+- ❌ Don't skip updating `plan.md` with branch tracking
+- ❌ Don't remove tasks from `plan.md` before merge
+- ❌ Don't work on multiple tasks simultaneously (finish one first)
+
+**Summary**: When implementing tasks, always create a feature branch, implement, commit, push, and update plan.md with branch tracking. See CONTRIBUTING.md for complete details.
 
 ## Technology Stack
 
@@ -128,9 +181,11 @@ PLAYER ends turn N                 # Turn end
 │   ├── errors/          # Edge cases and malformed logs
 │   └── ...
 ├── golden/              # Expected parser outputs (will be created)
+├── CLAUDE.md            # AI guidance for this project
+├── CONTRIBUTING.md      # AI contributor workflow (branch creation, task tracking)
 ├── requirements.md      # Feature requirements
 ├── architecture.md      # Technical design
-├── plan.md             # Implementation roadmap
+├── plan.md             # Implementation roadmap with task list
 └── star-realms-knowledge.md  # Game rules reference
 ```
 
