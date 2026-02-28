@@ -29,6 +29,8 @@
 - Add test scripts to package.json
 
 ### Task 1.3: Select Sample Game Logs
+**Status**: Completed
+**Branch**: feature/select-sample-game-logs
 **Goal**: Identify real Star Realms logs for testing
 - Review existing logs in `logdata/` directory
 - Select at least 2-3 logs with different characteristics
