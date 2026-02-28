@@ -49,6 +49,8 @@
 - Write unit tests for pattern matching
 
 ### Task 2.2: Implement Simple Parser
+**Status**: Completed
+**Branch**: feature/simple-parser-v2
 **Goal**: Extract player names and winner using regex
 - Create `lib/parser/basic.ts`
 - Implement `parseGameBasics(log: string)` function
@@ -57,6 +59,8 @@
 - Return `{ players: string[], winner: string }`
 
 ### Task 2.3: Define Basic Game Model Types
+**Status**: Completed
+**Branch**: feature/simple-parser-v2
 **Goal**: Create TypeScript interfaces for Phase 1 output
 - Create `lib/types/game.ts`
 - Define `Player` interface with `name` field
