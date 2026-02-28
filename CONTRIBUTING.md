@@ -16,11 +16,38 @@ This project uses a structured workflow based on the implementation plan defined
 
 ## Implementation Process
 
+### Important: Using GitHub CLI (gh)
+
+**CRITICAL**: When using GitHub CLI commands (`gh pr`, `gh issue`, etc.), AI agents MUST use the `gh-cli` skill instead of calling `gh` commands directly via the Bash tool.
+
+**Why?** The gh-cli skill handles authentication properly, ensuring:
+- PR creation uses the repository owner's credentials (not bot credentials)
+- Code reviews use the bot's credentials (allowing review of own PRs)
+- Proper token management and expiration handling
+
+**How to use the gh-cli skill:**
+
+```
+Use the Skill tool with skill="gh-cli" and provide the command as arguments:
+
+Example:
+- Creating a PR: Skill(skill="gh-cli", args="create pull request...")
+- Listing PRs: Skill(skill="gh-cli", args="list pull requests")
+- Reviewing a PR: Skill(skill="gh-cli", args="review PR 123 with approval...")
+```
+
+**DO NOT** call `gh` commands directly using the Bash tool, as this may use incorrect credentials.
+
+For reference, the gh-cli skill documentation is located in `.claude/skills/gh-cli/`.
+
+---
+
 ### 0. Choose Your Task Priority (Do This First!)
 
 **Before starting any work**, always check for open pull requests and choose the highest priority task:
 
 ```bash
+# AI agents: Use the gh-cli skill instead of running this directly
 gh pr list
 ```
 
@@ -54,8 +81,8 @@ If there are open PRs **with code reviews** that you created, address the feedba
 
 1. **Reflect deeply on the review:**
    - Read the PR description and all review comments carefully
-   - Check out the PR branch locally: `gh pr checkout <number>`
-   - Review the code changes: `gh pr diff <number>`
+   - Check out the PR branch locally: `gh pr checkout <number>` (AI agents: use gh-cli skill)
+   - Review the code changes: `gh pr diff <number>` (AI agents: use gh-cli skill)
    - Understand the reviewer's concerns and suggestions
    - Consider the context of the changes and their impact
 
@@ -73,7 +100,7 @@ If there are open PRs **with code reviews** that you created, address the feedba
 
 4. **Communicate your actions (optional):**
    - If you're not implementing a suggestion, add a comment explaining why
-   - Use `gh pr comment <number> --body "explanation"` to add comments
+   - Use `gh pr comment <number> --body "explanation"` to add comments (AI agents: use gh-cli skill)
    - Mark conversations as resolved if appropriate
 
 ---
@@ -198,7 +225,11 @@ git push
 
 ### 7. Create a Pull Request
 
-After pushing your branch and updating `plan.md`, create a pull request for review:
+After pushing your branch and updating `plan.md`, create a pull request for review.
+
+**AI Agents: MUST use the gh-cli skill for this step.** Do NOT call `gh pr create` directly via Bash.
+
+Example command format (shown for reference - AI agents should use the gh-cli skill):
 
 ```bash
 gh pr create --title "Brief description" --body "$(cat <<'EOF'
@@ -215,6 +246,8 @@ Related to task X.X in plan.md
 EOF
 )"
 ```
+
+**For AI agents:** Use `Skill(skill="gh-cli", args="create pull request with title '...' and description '...'")` instead of the bash command above.
 
 The PR will be reviewed according to the workflow in step 0. Other contributors (AI or human) will check for open PRs before starting new work and will review or address your PR.
 
@@ -294,7 +327,7 @@ If task requirements are unclear:
 
 Before starting any work, follow the priority order from step 0:
 
-- [ ] **Priority 1**: Checked for open PRs: `gh pr list`
+- [ ] **Priority 1**: Checked for open PRs using gh-cli skill (or `gh pr list` for humans)
 - [ ] **Priority 1**: If PRs exist without reviews, reviewed them following `CODE_REVIEW.md` guidelines
 - [ ] **Priority 2**: If PRs exist with reviews on my work, addressed the feedback
 - [ ] **Priority 3**: Only if no PRs need attention, selected a new task from `plan.md`
