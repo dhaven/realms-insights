@@ -11,6 +11,138 @@ This skill provides comprehensive guidance for using the GitHub CLI (`gh`) to in
 
 The GitHub CLI (`gh`) is a command-line tool for GitHub interactions. It enables PR management, code review, issue tracking, and repository operations directly from the terminal.
 
+## Authentication for AI Agents
+
+**CRITICAL**: AI agents must use different authentication methods depending on their role.
+
+### Authentication Decision Tree
+
+Before using any `gh` command, determine which token to use:
+
+```
+┌─────────────────────────────────────┐
+│ What is the agent doing?            │
+└─────────────────────────────────────┘
+               │
+               ├─── Reviewing a PR? ──────────────────────► Use GitHub App Token
+               │    - Posting code reviews                  (Section 1 below)
+               │    - Approving/requesting changes
+               │    - Commenting on PRs as a reviewer
+               │
+               └─── Implementing code? ───────────────────► Use User Token
+                    - Creating PRs                          (Section 2 below)
+                    - Pushing commits
+                    - Merging branches
+                    - Managing issues
+                    - Any other git/gh operations
+```
+
+### Section 1: Authentication for Code Review (GitHub App Token)
+
+**When to use**: When the agent is acting as a **code reviewer**.
+
+**Why**: This authenticates as a separate "bot" identity, avoiding the limitation that users cannot review their own PRs.
+
+**Usage**:
+
+```bash
+# Source .env file to load credentials
+source .env
+
+# Generate and export GitHub App token (expires in 1 hour)
+export GH_TOKEN=$(.claude/skills/gh-cli/scripts/generate-github-app-token.sh)
+
+# Verify authentication
+gh auth status
+# Should show: "Logged in to github.com as your-app-name[bot]"
+
+# Now review PRs with the bot identity
+gh pr review 123 --approve --body "LGTM! Tests pass and code follows project standards."
+gh pr review 456 --request-changes --body "Please address the following issues..."
+```
+
+**Example complete workflow**:
+
+```bash
+# 1. Authenticate as GitHub App
+source .env
+export GH_TOKEN=$(.claude/skills/gh-cli/scripts/generate-github-app-token.sh)
+
+# 2. List open PRs
+gh pr list
+
+# 3. Review a PR
+gh pr view 1                    # Read PR description
+gh pr checkout 1                # Check out the branch
+gh pr diff 1                    # Review changes
+npm test                        # Run tests
+
+# 4. Post review
+gh pr review 1 --approve --body "Changes look good!"
+```
+
+### Section 2: Authentication for Code Implementation (User Token)
+
+**When to use**: When the agent is **implementing code, creating PRs, or performing git operations**.
+
+**Why**: These operations should be attributed to you (the repository owner), not the bot.
+
+**Usage**:
+
+```bash
+# Source .env file to load credentials
+source .env
+
+# Export user token
+export GH_TOKEN="$GITHUB_USER_TOKEN"
+
+# Verify authentication
+gh auth status
+# Should show: "Logged in to github.com as YOUR_USERNAME"
+
+# Now perform implementation tasks
+gh pr create --title "..." --body "..."
+git push origin feature-branch
+gh issue create --title "..."
+```
+
+**Example complete workflow**:
+
+```bash
+# 1. Authenticate as user
+source .env
+export GH_TOKEN="$GITHUB_USER_TOKEN"
+
+# 2. Create feature branch and implement code
+git checkout -b feature/new-feature
+# ... make code changes ...
+git add .
+git commit -m "Implement new feature"
+
+# 3. Push and create PR
+git push -u origin feature/new-feature
+gh pr create --title "Add new feature" --body "$(cat <<'EOF'
+## Summary
+- Implemented feature X
+- Added tests
+
+## Test Plan
+- [x] Run test suite
+EOF
+)"
+```
+
+### Quick Reference Table
+
+| Task | Token Type | Command |
+|------|------------|---------|
+| Review PR | GitHub App | `export GH_TOKEN=$(.claude/skills/gh-cli/scripts/generate-github-app-token.sh)` |
+| Approve PR | GitHub App | Same as above |
+| Create PR | User | `export GH_TOKEN="$GITHUB_USER_TOKEN"` |
+| Push commits | User | Same as above |
+| Merge PR | User | Same as above |
+| Create issue | User | Same as above |
+
 ## GitHub CLI Commands Reference
 
 ### Pull Request Operations
@@ -192,18 +324,25 @@ gh api repos/owner/repo/actions/workflows
 
 ### Code Review Best Practices
 
+**IMPORTANT**: Before reviewing, authenticate with the GitHub App token (see Authentication Section 1).
+
 When reviewing a PR:
 
-1. **View the diff**: Use `gh pr diff <number>`
-2. **Check out locally**: Use `gh pr checkout <number>` to test
-3. **Run tests**: Execute test suite to verify changes
-4. **Review code quality**:
+1. **Authenticate properly**: Use GitHub App token, not user token
+   ```bash
+   source .env
+   export GH_TOKEN=$(.claude/skills/gh-cli/scripts/generate-github-app-token.sh)
+   ```
+2. **View the diff**: Use `gh pr diff <number>`
+3. **Check out locally**: Use `gh pr checkout <number>` to test
+4. **Run tests**: Execute test suite to verify changes
+5. **Review code quality**:
    - Follows project conventions
    - Includes appropriate tests
    - No security issues
    - Performance implications considered
-5. **Provide feedback**: Use `gh pr review` with specific, actionable comments
-6. **Approve or request changes**: Based on review findings
+6. **Provide feedback**: Use `gh pr review` with specific, actionable comments
+7. **Approve or request changes**: Based on review findings
 
 ## Common Workflows
 
@@ -235,9 +374,15 @@ EOF
 )"
 ```
 
-### Workflow 2: Review a PR
+### Workflow 2: Review a PR (as Code Reviewer)
 
 ```bash
+# STEP 1: Authenticate as GitHub App
+source .env
+export GH_TOKEN=$(.claude/skills/gh-cli/scripts/generate-github-app-token.sh)
+gh auth status  # Verify shows "[bot]" identity
+
+# STEP 2: Review the PR
 # List open PRs
 gh pr list
 
@@ -253,6 +398,7 @@ npm test  # or your test command
 # View diff
 gh pr diff 123
 
+# STEP 3: Post review
 # Approve if good
 gh pr review 123 --approve --body "Changes look good. Tests pass."
 
@@ -279,15 +425,29 @@ git pull origin main
 ### Authentication Issues
 
 ```bash
-# Login to GitHub
-gh auth login
-
-# Check authentication status
+# Check current authentication status
 gh auth status
 
-# Refresh authentication
-gh auth refresh
+# Verify you're using the correct token
+echo $GH_TOKEN | cut -c1-10  # Show first 10 chars (ghp_ or ghs_)
+
+# If using wrong token type, re-export the correct one:
+# For code implementation:
+source .env && export GH_TOKEN="$GITHUB_USER_TOKEN"
+
+# For code review:
+source .env && export GH_TOKEN=$(.claude/skills/gh-cli/scripts/generate-github-app-token.sh)
 ```
+
+**Common authentication errors:**
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| "Cannot review your own PR" | Using user token for review | Use GitHub App token instead |
+| "Resource not accessible by integration" | GitHub App lacks permissions | Check app permissions in GitHub settings |
+| "Bad credentials" | Token expired or invalid | Regenerate token in GitHub settings |
+| ".env file not found" | Missing .env configuration | Copy `.env.example` to `.env` and fill in |
+| "Private key file not found" | Wrong path in .env | Verify `GITHUB_APP_PRIVATE_KEY_PATH` is correct |
 
 ### PR Creation Fails
 
