@@ -17,7 +17,8 @@ This project has comprehensive documentation. **Read the appropriate file(s) bas
 
 | File | Read When... |
 |------|--------------|
-| **CONTRIBUTING.md** | You need to implement a task, create a branch, commit changes, or understand the development workflow |
+| **CONTRIBUTING.md** | You need to understand the development workflow, task priorities, or how to create branches and PRs |
+| **CODE_REVIEW.md** | You need to review a pull request or understand code review criteria and guidelines |
 | **architecture.md** | You need to understand the technical stack, parser design, validation strategy, or implementation approach |
 | **plan.md** | You need to select the next task to work on, check task status, or update task tracking |
 | **requirements.md** | You need to understand user-facing features and interaction flow |
@@ -63,7 +64,8 @@ Quick reference for navigating the codebase:
 ├── golden/              # Expected parser outputs for testing
 │
 ├── CLAUDE.md            # This file - high-level AI guidance
-├── CONTRIBUTING.md      # Development workflow (READ THIS for implementation tasks)
+├── CONTRIBUTING.md      # Development workflow and task priorities
+├── CODE_REVIEW.md       # Code review guidelines and criteria
 ├── architecture.md      # Technical design and parser architecture
 ├── requirements.md      # Feature requirements
 ├── plan.md              # Implementation roadmap with task list

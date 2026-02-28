@@ -8,7 +8,80 @@ This project uses a structured workflow based on the implementation plan defined
 
 ## Implementation Process
 
+### 0. Choose Your Task Priority (Do This First!)
+
+**Before starting any work**, always check for open pull requests and choose the highest priority task:
+
+```bash
+gh pr list
+```
+
+Work on tasks in this priority order:
+
+---
+
+#### **Priority 1: Review PRs Without Reviews** (Highest Priority)
+
+If there are open PRs that have **no code reviews yet**, review them first.
+
+**Action:** Use the `/review` command to provide a comprehensive code review:
+
+```bash
+# In Claude Code, type:
+/review <pr-number>
+```
+
+The review will follow the guidelines in `CODE_REVIEW.md`, focusing on:
+- Does the PR achieve its goals from `plan.md`?
+- Code quality, testing, and architecture alignment
+- Security and correctness
+
+**After reviewing:** Provide one of three outcomes:
+- **Approve** if the PR meets all criteria
+- **Request Changes** if issues must be fixed
+- **Comment** for optional suggestions
+
+---
+
+#### **Priority 2: Address Code Reviews on Your PRs**
+
+If there are open PRs **with code reviews** that you created, address the feedback.
+
+**Action:** Follow this process:
+
+1. **Reflect deeply on the review:**
+   - Read the PR description and all review comments carefully
+   - Check out the PR branch locally: `gh pr checkout <number>`
+   - Review the code changes: `gh pr diff <number>`
+   - Understand the reviewer's concerns and suggestions
+   - Consider the context of the changes and their impact
+
+2. **Decide on a course of action:**
+   - Determine which review comments should be addressed
+   - Identify changes that would improve the code
+   - Consider any architectural or design implications
+   - Plan what changes need to be made
+
+3. **Implement necessary changes:**
+   - Make the required code changes
+   - Run tests to ensure nothing breaks: `npm test`
+   - Commit changes with clear messages referencing the review
+   - Push changes to the PR branch: `git push`
+
+4. **Communicate your actions (optional):**
+   - If you're not implementing a suggestion, add a comment explaining why
+   - Use `gh pr comment <number> --body "explanation"` to add comments
+   - Mark conversations as resolved if appropriate
+
+---
+
+#### **Priority 3: Work on a New Task** (Lowest Priority)
+
+**Only if** there are no PRs to review (Priority 1) and no code reviews to address (Priority 2), proceed to select a new task from `plan.md`.
+
 ### 1. Select a Task
+
+**After** checking for open PRs (see step 0 above):
 
 - Open `plan.md` and review the task list
 - Select the **first incomplete task** from the top of the list
@@ -98,9 +171,27 @@ git commit -m "Update plan.md: Track implementation branch"
 git push
 ```
 
-### 7. Create a Pull Request (if applicable)
+### 7. Create a Pull Request
 
-If working in a collaborative environment, create a pull request for review. Otherwise, proceed to testing and validation.
+After pushing your branch and updating `plan.md`, create a pull request for review:
+
+```bash
+gh pr create --title "Brief description" --body "$(cat <<'EOF'
+## Summary
+- Key change 1
+- Key change 2
+
+## Test Plan
+- [ ] Run test suite: npm test
+- [ ] Verify feature manually
+- [ ] Check edge cases
+
+Related to task X.X in plan.md
+EOF
+)"
+```
+
+The PR will be reviewed according to the workflow in step 0. Other contributors (AI or human) will check for open PRs before starting new work and will review or address your PR.
 
 ### 8. Task Completion Rules
 
@@ -169,7 +260,14 @@ If task requirements are unclear:
 
 ## Summary Checklist
 
-Before considering a task complete:
+Before starting any work, follow the priority order from step 0:
+
+- [ ] **Priority 1**: Checked for open PRs: `gh pr list`
+- [ ] **Priority 1**: If PRs exist without reviews, used `/review` to review them (see `CODE_REVIEW.md`)
+- [ ] **Priority 2**: If PRs exist with reviews on my work, addressed the feedback
+- [ ] **Priority 3**: Only if no PRs need attention, selected a new task from `plan.md`
+
+When implementing a task:
 
 - [ ] Created feature branch with descriptive name
 - [ ] Implemented the task according to specifications
@@ -178,7 +276,7 @@ Before considering a task complete:
 - [ ] Committed changes with clear messages
 - [ ] Pushed branch to remote
 - [ ] Updated `plan.md` with branch tracking
-- [ ] Created pull request (if applicable)
+- [ ] Created pull request
 - [ ] Task remains in `plan.md` until merged to `main`
 
 ---
