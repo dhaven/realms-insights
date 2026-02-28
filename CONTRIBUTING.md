@@ -93,7 +93,29 @@ If there are open PRs **with code reviews** that you created, address the feedba
 
 ### 2. Create a Feature Branch
 
-Before starting implementation, create a dedicated branch for the task:
+Before starting implementation, ensure your main branch is up to date and create a dedicated branch for the task.
+
+#### Ensure Main is Up to Date
+
+First, switch to main and pull the latest changes:
+
+```bash
+git checkout main
+git pull origin main
+```
+
+If you're already on a feature branch that's behind main, rebase it:
+
+```bash
+git checkout feature/your-branch-name
+git rebase main
+```
+
+**Important**: Always start from an up-to-date main branch to avoid merge conflicts and ensure you're working with the latest code.
+
+#### Create the Feature Branch
+
+Once main is up to date, create your feature branch:
 
 ```bash
 git checkout -b feature/task-name
