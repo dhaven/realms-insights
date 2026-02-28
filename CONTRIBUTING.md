@@ -6,6 +6,14 @@ This document provides guidance for AI assistants contributing to this project.
 
 This project uses a structured workflow based on the implementation plan defined in `plan.md`. All development work should follow this process to maintain consistency and traceability.
 
+**Important**: AI agents perform **all tasks** in this workflow including:
+- Selecting and implementing tasks from `plan.md`
+- Reviewing pull requests created by other agents
+- Addressing code review feedback on their own PRs
+- Creating and updating documentation
+
+**The only task performed by humans** is the final merge of approved PRs into the `main` branch.
+
 ## Implementation Process
 
 ### 0. Choose Your Task Priority (Do This First!)
@@ -22,7 +30,9 @@ Work on tasks in this priority order:
 
 #### **Priority 1: Review PRs Without Reviews** (Highest Priority)
 
-If there are open PRs that have **no code reviews yet**, review them first.
+If there are open PRs that have **no code reviews yet** and were **not created by you**, review them first.
+
+**Important**: Do not review PRs that you created yourself. Only review PRs created by other agents or contributors.
 
 **Action:** Provide a comprehensive code review following the guidelines in `CODE_REVIEW.md`, focusing on:
 - Does the PR achieve its goals from `plan.md`?
@@ -197,7 +207,14 @@ The PR will be reviewed according to the workflow in step 0. Other contributors 
 
 ### 9. Merge to Main
 
-This will be performed by a human supervisor
+**This is the ONLY step performed by a human supervisor.**
+
+After a PR is approved by an agent reviewer, a human will:
+- Perform the final merge to `main`
+- Delete the feature branch if appropriate
+- Ensure the task is marked as "Completed" in `plan.md`
+
+All other steps (implementation, review, addressing feedback) are performed by AI agents.
 
 ## Testing Requirements
 
