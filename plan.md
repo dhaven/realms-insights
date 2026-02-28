@@ -38,6 +38,8 @@
 ## Phase 2: Simple Parser (Phase 1 Requirements)
 
 ### Task 2.1: Implement Basic Pattern Matching Functions
+**Status**: Completed
+**Branch**: feature/basic-pattern-matching
 **Goal**: Create utility functions for pattern extraction
 - Create `lib/parser/patterns.ts`
 - Implement `stripHtmlTags()` function
