@@ -177,20 +177,6 @@ When reviewing test changes:
 - Ensure edge cases are covered
 - Verify test names clearly describe what they test
 
-## Using the /review Command
-
-The `/review` command in Claude Code will automatically follow these guidelines. Simply use:
-
-```
-/review <pr-number>
-```
-
-This will trigger a comprehensive code review that:
-- Checks alignment with plan.md goals
-- Reviews code quality and architecture
-- Verifies testing coverage
-- Provides specific, actionable feedback
-
 ---
 
 Following these guidelines ensures consistent, high-quality code reviews that maintain project standards and help contributors improve their work.

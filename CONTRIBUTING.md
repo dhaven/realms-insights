@@ -24,14 +24,7 @@ Work on tasks in this priority order:
 
 If there are open PRs that have **no code reviews yet**, review them first.
 
-**Action:** Use the `/review` command to provide a comprehensive code review:
-
-```bash
-# In Claude Code, type:
-/review <pr-number>
-```
-
-The review will follow the guidelines in `CODE_REVIEW.md`, focusing on:
+**Action:** Provide a comprehensive code review following the guidelines in `CODE_REVIEW.md`, focusing on:
 - Does the PR achieve its goals from `plan.md`?
 - Code quality, testing, and architecture alignment
 - Security and correctness
@@ -263,7 +256,7 @@ If task requirements are unclear:
 Before starting any work, follow the priority order from step 0:
 
 - [ ] **Priority 1**: Checked for open PRs: `gh pr list`
-- [ ] **Priority 1**: If PRs exist without reviews, used `/review` to review them (see `CODE_REVIEW.md`)
+- [ ] **Priority 1**: If PRs exist without reviews, reviewed them following `CODE_REVIEW.md` guidelines
 - [ ] **Priority 2**: If PRs exist with reviews on my work, addressed the feedback
 - [ ] **Priority 3**: Only if no PRs need attention, selected a new task from `plan.md`
 
