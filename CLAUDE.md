@@ -1,206 +1,88 @@
+
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides high-level guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
 This is a **Star Realms game log analyzer** web application. Users upload game logs (copied from the Star Realms mobile/desktop app) and receive a parsed view showing player names, winner, and eventually detailed game statistics.
 
-**Status**: Pre-implementation (planning phase). No code written yet - only documentation exists.
+**Current Status**: Early implementation phase. Basic project structure exists with testing framework set up.
 
-## Key Documentation Files
+## Documentation Structure
 
-Read these files to understand the project:
+This project has comprehensive documentation. **Read the appropriate file(s) based on your task:**
 
-1. **requirements.md** - User-facing features and interaction flow
-2. **architecture.md** - Technical stack, parser design, validation strategy
-3. **plan.md** - Detailed implementation roadmap with atomic tasks
-4. **star-realms-knowledge.md** - Game rules and mechanics reference
-5. **CONTRIBUTING.md** - Workflow for AI contributors implementing tasks
+### When to Read Each File
 
-## How to Implement Tasks
+| File | Read When... |
+|------|--------------|
+| **CONTRIBUTING.md** | You need to implement a task, create a branch, commit changes, or understand the development workflow |
+| **architecture.md** | You need to understand the technical stack, parser design, validation strategy, or implementation approach |
+| **plan.md** | You need to select the next task to work on, check task status, or update task tracking |
+| **requirements.md** | You need to understand user-facing features and interaction flow |
+| **star-realms-knowledge.md** | You need information about Star Realms game rules, card mechanics, or log format patterns |
 
-When asked to "implement the next task" or similar requests, follow this workflow:
+### Quick Start Guide
 
-### 1. Read CONTRIBUTING.md
-The complete contribution workflow is documented in `CONTRIBUTING.md`. Always follow that process.
+**For implementing tasks:**
+1. Read **CONTRIBUTING.md** for the complete workflow
+2. Read **architecture.md** for technical guidance
+3. Check **plan.md** to select an available task
+4. Reference **star-realms-knowledge.md** as needed for game mechanics
 
-### 2. Select Task from plan.md
-- Open `plan.md` and find the **first incomplete task** from the top
-- Tasks are prioritized - always work top-down
-- Skip tasks already assigned to a branch
+**For understanding the codebase:**
+1. Read **requirements.md** to understand what the app does
+2. Read **architecture.md** to understand how it works
+3. Explore the code with context from those documents
 
-### 3. Follow the Branch Workflow
-**CRITICAL**: Never implement directly on `main`. Always use feature branches:
+## Key Principles
 
-```bash
-# Create feature branch
-git checkout -b feature/descriptive-name
+When working on this project:
 
-# Implement the task
-# ... write code, tests, etc ...
-
-# Commit changes
-git add <files>
-git commit -m "Clear description of changes
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
-
-# Push branch
-git push -u origin feature/descriptive-name
-
-# Update plan.md to track the branch
-# Add "Status: In Progress" and "Branch: feature/descriptive-name" to the task
-git add plan.md
-git commit -m "Update plan.md: Track implementation branch"
-git push
-```
-
-### 4. Task Tracking Rules
-- **Before merge**: Task stays in `plan.md` marked as "In Progress" with branch name
-- **After merge**: Task can be marked "Completed" or removed from `plan.md`
-- Never remove tasks before their branches are merged to `main`
-- This maintains a complete audit trail
-
-### 5. What NOT to Do
-- ❌ Don't implement on `main` branch directly
-- ❌ Don't skip updating `plan.md` with branch tracking
-- ❌ Don't remove tasks from `plan.md` before merge
-- ❌ Don't work on multiple tasks simultaneously (finish one first)
-
-**Summary**: When implementing tasks, always create a feature branch, implement, commit, push, and update plan.md with branch tracking. See CONTRIBUTING.md for complete details.
-
-## Technology Stack
-
-- **Language**: TypeScript
-- **Framework**: Next.js (App Router)
-- **Testing**: Golden file testing (parser output validation)
-
-## Parser Architecture
-
-The parser uses a **state machine approach** that processes logs in a single pass while maintaining game state.
-
-```
-Raw Log Text → State Machine Parser → Game Model
-```
-
-### Phase 1 Implementation (Simple)
-For initial requirements (player names + winner), uses simple regex extraction:
-
-```typescript
-function parseGameBasics(log: string): { players: string[], winner: string } {
-  // Extract players from turn start lines
-  const playerSet = new Set<string>();
-  for (const match of log.matchAll(/It is now (.+?)'s turn/g)) {
-    playerSet.add(match[1]);
-  }
-
-  // Extract winner
-  const winnerMatch = log.match(/=== (.+?) has won the game\. ===/);
-  return { players: Array.from(playerSet), winner: winnerMatch?.[1] };
-}
-```
-
-**Rationale**: ~20 lines meets all Phase 1 requirements. Full state machine is premature.
-
-### Phase 2 Implementation (State Machine)
-For comprehensive parsing, implements full state machine:
-
-**Pattern Matchers** (stateless):
-- Strip HTML tags
-- Match line patterns with regex
-- Extract structured data
-- Pure functions, easily testable
-
-**State Machine Parser** (stateful):
-- Tracks current player, turn, resources
-- Tracks persistent state (bases in play, authority)
-- Validates state transitions as they occur
-- Single pass through log with full context
-
-**Game Model Builder**:
-- Transforms parser state into public API format
-- Calculates derived statistics
-- Formats for UI consumption
-
-## Implementation Phases
-
-### Phase 1 (Current Requirements)
-Minimal viable parser:
-- Extract player names from log
-- Identify winner from `=== X has won the game. ===` line
-- Display results on overview page
-
-### Phase 2 (Future)
-Full game tracking:
-- Complete turn structure
-- Card acquisitions with costs
-- Combat and attacks
-- Resource tracking over time
-
-## Validation Strategy
-
-### Golden File Testing
-- Sample logs stored in `logdata/` (organized by expansion/game mode)
-- Expected outputs in `golden/*.expected.json`
-- Tests parse logs and assert output matches expected JSON
-- Any mismatch indicates parsing bug
-
-### Internal Consistency Checks
-- Both players start with 50 Authority
-- Winner has Authority > 0, loser has Authority ≤ 0
-- Turn numbers are sequential and alternate between players
-- Resource totals match running totals from log
-
-## Game Log Format
-
-Star Realms logs are plain text with embedded HTML color tags. Key patterns:
-
-```
-It is now PLAYER's turn N          # Turn start
-PLAYER  >  <color=#XXXXXX>Card</color> +X Trade (Trade:Y)  # Card play
-Acquired <color=#XXXXXX>Card</color>   # Card purchase
-Attacked PLAYER for X (New Authority:Y)  # Attack
-PLAYER ends turn N                 # Turn end
-=== PLAYER has won the game. ===   # Game end
-```
-
-**Player name formats**:
-- Can appear in turn start lines: `It is now MAX1478's turn 1`
-- Can appear in action lines: `MAX1478 > <color=...>Card</color>`
-- Can appear in attack lines: `Attacked YL5943 for 4`
+1. **Always read CONTRIBUTING.md first** - It contains the complete workflow for implementing tasks
+2. **Never commit directly to `main`** - All work happens on feature branches
+3. **Follow the architecture** - Read architecture.md for technical design decisions
+4. **Update plan.md** - Track your implementation branch in the plan file
+5. **Start simple** - Avoid over-engineering; meet current requirements, not hypothetical future ones
 
 ## Directory Structure
 
+Quick reference for navigating the codebase:
+
 ```
 /
-├── logdata/              # Sample game logs (organized by expansion)
+├── app/                 # Next.js app directory (pages and API routes)
+├── lib/                 # Shared library code (parser implementation)
+├── tests/               # Test files
+├── logdata/             # Sample game logs (organized by expansion)
 │   ├── core_set/
 │   ├── colony_wars/
 │   ├── frontier/
-│   ├── errors/          # Edge cases and malformed logs
-│   └── ...
-├── golden/              # Expected parser outputs (will be created)
-├── CLAUDE.md            # AI guidance for this project
-├── CONTRIBUTING.md      # AI contributor workflow (branch creation, task tracking)
+│   └── errors/          # Edge cases and malformed logs
+├── golden/              # Expected parser outputs for testing
+│
+├── CLAUDE.md            # This file - high-level AI guidance
+├── CONTRIBUTING.md      # Development workflow (READ THIS for implementation tasks)
+├── architecture.md      # Technical design and parser architecture
 ├── requirements.md      # Feature requirements
-├── architecture.md      # Technical design
-├── plan.md             # Implementation roadmap with task list
-└── star-realms-knowledge.md  # Game rules reference
+├── plan.md              # Implementation roadmap with task list
+└── star-realms-knowledge.md  # Game rules and mechanics reference
 ```
 
-## Important Notes
+## Common Questions
 
-### When Implementing the Parser
-1. Start with Phase 1 scope only (player names + winner)
-2. Create golden test files for at least 2-3 sample logs before implementing
-3. Test against logs in `logdata/errors/` for edge cases
-4. Color tags must be stripped before parsing line content
-5. Player names can contain alphanumeric characters and may vary in format
+**Q: How do I implement a task?**
+→ Read `CONTRIBUTING.md` for the complete workflow.
 
-### Next.js Structure (To Be Created)
-- `app/page.tsx` - Upload page with textarea
-- `app/game/page.tsx` - Game overview/results page
-- `app/api/parse/route.ts` - Server-side parsing endpoint
-- `lib/parser/` - Parser implementation (tokenizer, event parser, game model)
-- `tests/` - Golden file tests and unit tests
+**Q: What technology is this project using?**
+→ Read `architecture.md` for the tech stack and design decisions.
+
+**Q: What should I work on next?**
+→ Check `plan.md` for available tasks, then follow the workflow in `CONTRIBUTING.md`.
+
+**Q: How does the parser work?**
+→ Read `architecture.md` for the parser architecture and implementation phases.
+
+**Q: What are the Star Realms game rules?**
+→ Read `star-realms-knowledge.md` for game mechanics and log format patterns.
