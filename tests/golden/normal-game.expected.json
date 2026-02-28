@@ -1,0 +1,7 @@
+{
+  "players": [
+    "Player",
+    "Hard AI"
+  ],
+  "winner": "Player"
+}
