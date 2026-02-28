@@ -38,7 +38,7 @@ set -euo pipefail
 
 # Determine script directory for relative path resolution
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 
 # Source environment variables from .env file
 ENV_FILE="$PROJECT_ROOT/.env"
