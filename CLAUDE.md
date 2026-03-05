@@ -17,20 +17,25 @@ This project has comprehensive documentation. **Read the appropriate file(s) bas
 
 | File | Read When... |
 |------|--------------|
-| **CONTRIBUTING.md** | You need to understand the development workflow, task priorities, or how to create branches and PRs |
-| **CODE_REVIEW.md** | You need to review a pull request or understand code review criteria and guidelines |
 | **architecture.md** | You need to understand the technical stack, parser design, validation strategy, or implementation approach |
 | **plan.md** | You need to select the next task to work on, check task status, or update task tracking |
 | **requirements.md** | You need to understand user-facing features and interaction flow |
 | **star-realms-knowledge.md** | You need information about Star Realms game rules, card mechanics, or log format patterns |
 
+**Note:** Development workflow and code review guidelines are now in specialized agent files (`.claude/agents/coder.md` and `.claude/agents/reviewer.md`).
+
 ### Quick Start Guide
 
 **For implementing tasks:**
-1. Read **CONTRIBUTING.md** for the complete workflow
+1. Use the **coder agent** (`.claude/agents/coder.md`) which has the complete development workflow
 2. Read **architecture.md** for technical guidance
 3. Check **plan.md** to select an available task
 4. Reference **star-realms-knowledge.md** as needed for game mechanics
+
+**For reviewing pull requests:**
+1. Use the **reviewer agent** (`.claude/agents/reviewer.md`) which has complete review guidelines
+2. Read **plan.md** to find the task the PR implements
+3. Read **architecture.md** to verify architectural alignment
 
 **For understanding the codebase:**
 1. Read **requirements.md** to understand what the app does
@@ -41,7 +46,7 @@ This project has comprehensive documentation. **Read the appropriate file(s) bas
 
 When working on this project:
 
-1. **Always read CONTRIBUTING.md first** - It contains the complete workflow for implementing tasks
+1. **Use the specialized agents** - The coder and reviewer agents contain complete workflows
 2. **Never commit directly to `main`** - All work happens on feature branches
 3. **Follow the architecture** - Read architecture.md for technical design decisions
 4. **Update plan.md** - Track your implementation branch in the plan file
@@ -63,9 +68,11 @@ Quick reference for navigating the codebase:
 │   └── errors/          # Edge cases and malformed logs
 ├── golden/              # Expected parser outputs for testing
 │
+├── .claude/             # Agent configurations
+│   └── agents/
+│       ├── coder.md     # Development workflow and implementation guide
+│       └── reviewer.md  # Code review guidelines and criteria
 ├── CLAUDE.md            # This file - high-level AI guidance
-├── CONTRIBUTING.md      # Development workflow and task priorities
-├── CODE_REVIEW.md       # Code review guidelines and criteria
 ├── architecture.md      # Technical design and parser architecture
 ├── requirements.md      # Feature requirements
 ├── plan.md              # Implementation roadmap with task list
@@ -75,13 +82,16 @@ Quick reference for navigating the codebase:
 ## Common Questions
 
 **Q: How do I implement a task?**
-→ Read `CONTRIBUTING.md` for the complete workflow.
+→ Use the **coder agent** which has the complete development workflow.
+
+**Q: How do I review a pull request?**
+→ Use the **reviewer agent** which has complete review guidelines.
 
 **Q: What technology is this project using?**
 → Read `architecture.md` for the tech stack and design decisions.
 
 **Q: What should I work on next?**
-→ Check `plan.md` for available tasks, then follow the workflow in `CONTRIBUTING.md`.
+→ Check `plan.md` for available tasks, then use the coder agent to implement.
 
 **Q: How does the parser work?**
 → Read `architecture.md` for the parser architecture and implementation phases.
