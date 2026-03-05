@@ -4,35 +4,41 @@ import { join } from 'path';
 import { parseGameBasics } from '../../lib/parser/basic';
 
 describe('parseGameBasics', () => {
-  describe('with real game logs', () => {
-    it('should parse normal core set game', () => {
+  describe('golden file tests', () => {
+    it('should match golden output for normal-game.txt', () => {
       const log = readFileSync(join(__dirname, '../fixtures/normal-game.txt'), 'utf-8');
+      const expected = JSON.parse(
+        readFileSync(join(__dirname, '../golden/normal-game.expected.json'), 'utf-8')
+      );
       const result = parseGameBasics(log);
 
-      expect(result.players).toHaveLength(2);
-      expect(result.players).toContain('Player');
-      expect(result.players).toContain('Hard AI');
-      expect(result.winner).toBe('Player');
+      expect(result.players).toEqual(expect.arrayContaining(expected.players));
+      expect(result.players).toHaveLength(expected.players.length);
+      expect(result.winner).toBe(expected.winner);
     });
 
-    it('should parse game with concede', () => {
+    it('should match golden output for concede-game.txt', () => {
       const log = readFileSync(join(__dirname, '../fixtures/concede-game.txt'), 'utf-8');
+      const expected = JSON.parse(
+        readFileSync(join(__dirname, '../golden/concede-game.expected.json'), 'utf-8')
+      );
       const result = parseGameBasics(log);
 
-      expect(result.players).toHaveLength(2);
-      expect(result.players).toContain('marcuseth');
-      expect(result.players).toContain('Randomosity');
-      expect(result.winner).toBe('Randomosity');
+      expect(result.players).toEqual(expect.arrayContaining(expected.players));
+      expect(result.players).toHaveLength(expected.players.length);
+      expect(result.winner).toBe(expected.winner);
     });
 
-    it('should parse short game with abrupt end', () => {
+    it('should match golden output for short-game.txt', () => {
       const log = readFileSync(join(__dirname, '../fixtures/short-game.txt'), 'utf-8');
+      const expected = JSON.parse(
+        readFileSync(join(__dirname, '../golden/short-game.expected.json'), 'utf-8')
+      );
       const result = parseGameBasics(log);
 
-      expect(result.players).toHaveLength(2);
-      expect(result.players).toContain('MAX1478');
-      expect(result.players).toContain('YL5943');
-      expect(result.winner).toBe('YL5943');
+      expect(result.players).toEqual(expect.arrayContaining(expected.players));
+      expect(result.players).toHaveLength(expected.players.length);
+      expect(result.winner).toBe(expected.winner);
     });
   });
 

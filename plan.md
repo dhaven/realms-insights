@@ -70,7 +70,7 @@
 ## Phase 3: Validation - Golden File Testing
 
 ### Task 3.1: Create Expected Output Files
-**Status**: In Progress
+**Status**: Completed
 **Branch**: feature/golden-file-expected-outputs
 **Goal**: Manually define correct parsing results for Phase 1
 - Create `tests/golden/` directory
@@ -79,6 +79,8 @@
 - Verify against actual game logs manually
 
 ### Task 3.2: Implement Golden File Test Suite
+**Status**: In Progress
+**Branch**: feature/golden-file-test-suite
 **Goal**: Automate validation of parser output
 - Create test file `tests/parser-basic.test.ts`
 - Load each fixture log file
