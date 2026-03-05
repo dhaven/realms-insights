@@ -89,6 +89,8 @@
 - Assert parsed output matches expected output exactly
 
 ### Task 3.3: Add Basic Validation
+**Status**: In Progress
+**Branch**: feature/basic-validation
 **Goal**: Validate parser output follows basic rules
 - Check that exactly 2 players exist
 - Check that winner is one of the players
