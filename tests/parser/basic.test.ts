@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { parseGameBasics } from '../../lib/parser/basic';
+import { ValidationError } from '../../lib/parser/validation';
 
 describe('parseGameBasics', () => {
   describe('golden file tests', () => {
@@ -95,18 +96,45 @@ describe('parseGameBasics', () => {
       expect(() => parseGameBasics(log)).toThrow('Failed to extract winner from game log');
     });
 
-    it('should throw error when winner is not a player', () => {
+    it('should throw ValidationError when winner is not a player', () => {
       const log = `
         It is now Alice's turn 1
         It is now Bob's turn 2
         === Charlie has won the game. ===
       `;
 
+      expect(() => parseGameBasics(log)).toThrow(ValidationError);
       expect(() => parseGameBasics(log)).toThrow('Winner "Charlie" is not in the list of players');
     });
 
     it('should throw error on empty log', () => {
       expect(() => parseGameBasics('')).toThrow('Failed to extract players');
+    });
+  });
+
+  describe('validation - player count', () => {
+    it('should throw ValidationError when only 1 player found', () => {
+      const log = `
+        It is now Alice's turn 1
+        It is now Alice's turn 2
+        It is now Alice's turn 3
+        === Alice has won the game. ===
+      `;
+
+      expect(() => parseGameBasics(log)).toThrow(ValidationError);
+      expect(() => parseGameBasics(log)).toThrow('Star Realms is a 2-player game. Found 1 player');
+    });
+
+    it('should throw ValidationError when 3 players found', () => {
+      const log = `
+        It is now Alice's turn 1
+        It is now Bob's turn 2
+        It is now Charlie's turn 3
+        === Alice has won the game. ===
+      `;
+
+      expect(() => parseGameBasics(log)).toThrow(ValidationError);
+      expect(() => parseGameBasics(log)).toThrow('Star Realms is a 2-player game. Found 3 player');
     });
   });
 

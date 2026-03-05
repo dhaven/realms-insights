@@ -4,6 +4,7 @@
 
 import { TURN_START_PATTERN, GAME_END_PATTERN } from './patterns';
 import { BasicGame } from '../types/game';
+import { validateBasicGame } from './validation';
 
 /**
  * Parses a Star Realms game log and extracts basic information
@@ -24,14 +25,15 @@ export function parseGameBasics(log: string): BasicGame {
     throw new Error('Failed to extract winner from game log');
   }
 
-  if (!players.includes(winner)) {
-    throw new Error(`Winner "${winner}" is not in the list of players: ${players.join(', ')}`);
-  }
-
-  return {
+  const game: BasicGame = {
     players,
     winner,
   };
+
+  // Run validation checks on parsed data
+  validateBasicGame(game);
+
+  return game;
 }
 
 /**
